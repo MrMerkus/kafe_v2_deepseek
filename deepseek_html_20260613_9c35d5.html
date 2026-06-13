@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Demo Cafe | Lezzet Durağı</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00704A;
+            --primary-dark: #005538;
+            --secondary: #C49A2B;
+            --cream: #F5F0E8;
+            --white: #ffffff;
+            --black: #1a1a1a;
+            --gray: #6b6b6b;
+            --light-gray: #f8f8f8;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-heading: 'Playfair Display', serif;
+            --font-body: 'Montserrat', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--black);
+            background: var(--white);
+            line-height: 1.7;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ============ LOADER ============ */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+        .loader .coffee-cup {
+            width: 50px;
+            height: 50px;
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            position: relative;
+            animation: spin 0.8s linear infinite;
+        }
+        .loader .coffee-cup::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: var(--cream);
+            border-radius: 50%;
+        }
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ============ NAVIGATION ============ */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: transparent;
+            transition: var(--transition);
+            padding: 18px 0;
+        }
+        .navbar.scrolled {
+            background: var(--white);
+            box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+        }
+        .navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 30px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            z-index: 1001;
+        }
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 20px;
+            transition: var(--transition);
+        }
+        .navbar.scrolled .logo-icon {
+            background: var(--primary-dark);
+        }
+        .logo-text {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--white);
+            letter-spacing: 1px;
+            transition: var(--transition);
+        }
+        .navbar.scrolled .logo-text {
+            color: var(--black);
+        }
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 35px;
+            align-items: center;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: var(--white);
+            font-weight: 500;
+            font-size: 0.95rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            position: relative;
+            transition: var(--transition);
+            padding: 6px 0;
+        }
+        .navbar.scrolled .nav-links a {
+            color: var(--black);
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+        .nav-cta {
+            background: var(--secondary);
+            color: var(--black) !important;
+            padding: 10px 22px !important;
+            border-radius: 50px;
+            font-weight: 600 !important;
+            transition: var(--transition);
+        }
+        .nav-cta:hover {
+            background: #d4aa2f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(196, 154, 43, 0.4);
+        }
+        .nav-cta::after {
+            display: none !important;
+        }
+        /* Hamburger */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+            z-index: 1001;
+        }
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: var(--white);
+            border-radius: 3px;
+            transition: var(--transition);
+        }
+        .navbar.scrolled .hamburger span {
+            background: var(--black);
+        }
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 6px);
+        }
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -6px);
+        }
+
+        /* ============ HERO SLIDER ============ */
+        .hero-slider {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            min-height: 650px;
+            overflow: hidden;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.2s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.25) 60%, rgba(0, 0, 0, 0.6) 100%);
+            z-index: 1;
+        }
+        .slide-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            color: var(--white);
+            max-width: 750px;
+            padding: 0 20px;
+            animation: fadeInUp 0.8s ease forwards;
+        }
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .slide-content .tag {
+            display: inline-block;
+            background: var(--secondary);
+            color: var(--black);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+        .slide-content h1 {
+            font-family: var(--font-heading);
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 18px;
+            text-shadow: 0 2px 15px rgba(0, 0, 0, 0.3);
+        }
+        .slide-content p {
+            font-size: 1.2rem;
+            font-weight: 300;
+            margin-bottom: 30px;
+            opacity: 0.95;
+            text-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
+        }
+        .btn {
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            transition: var(--transition);
+            cursor: pointer;
+            border: none;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: var(--white);
+        }
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 112, 74, 0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--white);
+            border: 2px solid var(--white);
+            margin-left: 12px;
+        }
+        .btn-outline:hover {
+            background: var(--white);
+            color: var(--black);
+            transform: translateY(-3px);
+        }
+        /* Slider Controls */
+        .slider-controls {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .slider-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+        }
+        .slider-dot.active {
+            background: var(--secondary);
+            width: 35px;
+            border-radius: 20px;
+        }
+        .slider-arrow {
+            background: rgba(255, 255, 255, 0.2);
+            color: var(--white);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 50%;
+            z-index: 3;
+            transform: translateY(-50%);
+        }
+        .slider-arrow:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        .slider-arrow.prev {
+            left: 25px;
+        }
+        .slider-arrow.next {
+            right: 25px;
+        }
+
+        /* ============ SECTIONS ============ */
+        .section {
+            padding: 90px 0;
+        }
+        .section-cream {
+            background: var(--cream);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-header .section-tag {
+            display: inline-block;
+            background: rgba(0, 112, 74, 0.1);
+            color: var(--primary);
+            padding: 7px 16px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 14px;
+        }
+        .section-header h2 {
+            font-family: var(--font-heading);
+            font-size: 2.8rem;
+            font-weight: 700;
+            color: var(--black);
+            margin-bottom: 12px;
+        }
+        .section-header p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ============ MENU CARDS ============ */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        .menu-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+        }
+        .menu-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-hover);
+        }
+        .menu-card-img {
+            width: 100%;
+            height: 240px;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        .menu-card:hover .menu-card-img {
+            transform: scale(1.06);
+        }
+        .menu-card-body {
+            padding: 22px 20px;
+            text-align: center;
+        }
+        .menu-card-body .badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: var(--black);
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .menu-card-body h3 {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .menu-card-body .price {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        /* ============ FEATURED BANNER ============ */
+        .featured-banner {
+            background: var(--primary);
+            border-radius: var(--radius);
+            padding: 60px 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            color: var(--white);
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        .featured-banner .banner-text h2 {
+            font-family: var(--font-heading);
+            font-size: 2.4rem;
+            margin-bottom: 12px;
+        }
+        .featured-banner .banner-text p {
+            font-weight: 300;
+            font-size: 1.05rem;
+            opacity: 0.9;
+        }
+        .featured-banner .btn {
+            background: var(--secondary);
+            color: var(--black);
+            white-space: nowrap;
+        }
+        .featured-banner .btn:hover {
+            background: #d4aa2f;
+            box-shadow: 0 8px 25px rgba(196, 154, 43, 0.5);
+        }
+
+        /* ============ TESTIMONIALS ============ */
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 28px;
+        }
+        .testimonial-card {
+            background: var(--white);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        .testimonial-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-4px);
+        }
+        .testimonial-card .stars {
+            color: var(--secondary);
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+        .testimonial-card .quote {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+        .testimonial-card .author {
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* ============ FOOTER ============ */
+        footer {
+            background: #1a1a1a;
+            color: #ccc;
+            padding: 60px 0 20px;
+        }
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-col h3 {
+            color: var(--white);
+            font-family: var(--font-heading);
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        .footer-col h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 30px;
+            height: 2px;
+            background: var(--secondary);
+        }
+        .footer-col ul {
+            list-style: none;
+        }
+        .footer-col ul li {
+            margin-bottom: 10px;
+        }
+        .footer-col ul li a {
+            color: #aaa;
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+        .footer-col ul li a:hover {
+            color: var(--secondary);
+            padding-left: 5px;
+        }
+        .footer-col .social-icons {
+            display: flex;
+            gap: 14px;
+            margin-top: 10px;
+        }
+        .footer-col .social-icons a {
+            color: #aaa;
+            font-size: 1.3rem;
+            transition: var(--transition);
+        }
+        .footer-col .social-icons a:hover {
+            color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        .footer-col .newsletter-input {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .footer-col .newsletter-input input {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 50px;
+            border: none;
+            background: #333;
+            color: white;
+            outline: none;
+        }
+        .footer-col .newsletter-input button {
+            background: var(--secondary);
+            color: var(--black);
+            border: none;
+            padding: 10px 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+        .footer-col .newsletter-input button:hover {
+            background: #d4aa2f;
+        }
+        .footer-bottom {
+            border-top: 1px solid #333;
+            padding-top: 20px;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        /* ============ BACK TO TOP ============ */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+            z-index: 900;
+            border: none;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0, 112, 74, 0.4);
+        }
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            background: var(--primary-dark);
+            transform: translateY(-4px);
+        }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 1024px) {
+            .slide-content h1 {
+                font-size: 2.8rem;
+            }
+            .section-header h2 {
+                font-size: 2.2rem;
+            }
+            .featured-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 40px 30px;
+            }
+        }
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 280px;
+                height: 100vh;
+                background: var(--white);
+                flex-direction: column;
+                justify-content: center;
+                gap: 25px;
+                transition: var(--transition);
+                box-shadow: -5px 0 30px rgba(0, 0, 0, 0.2);
+                padding: 40px;
+            }
+            .nav-links.active {
+                right: 0;
+            }
+            .nav-links a {
+                color: var(--black) !important;
+                font-size: 1rem;
+            }
+            .hamburger {
+                display: flex;
+            }
+            .slide-content h1 {
+                font-size: 2.2rem;
+            }
+            .slide-content p {
+                font-size: 1rem;
+            }
+            .btn {
+                padding: 12px 28px;
+                font-size: 0.8rem;
+            }
+            .btn-outline {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            .slider-arrow {
+                width: 35px;
+                height: 35px;
+                font-size: 0.8rem;
+            }
+            .slider-arrow.prev {
+                left: 10px;
+            }
+            .slider-arrow.next {
+                right: 10px;
+            }
+            .section {
+                padding: 50px 0;
+            }
+            .section-header {
+                margin-bottom: 35px;
+            }
+            .section-header h2 {
+                font-size: 1.8rem;
+            }
+        }
+        @media (max-width: 480px) {
+            .slide-content h1 {
+                font-size: 1.7rem;
+            }
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+            .footer-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .footer-col h3::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+            .footer-col .social-icons {
+                justify-content: center;
+            }
+            .footer-col .newsletter-input {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADER -->
+    <div class="loader" id="loader">
+        <div class="coffee-cup"></div>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <div class="logo-icon"><i class="fas fa-mug-hot"></i></div>
+                <span class="logo-text">Demo Cafe</span>
+            </a>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Anasayfa</a></li>
+                <li><a href="#menu">Menü</a></li>
+                <li><a href="#about">Hakkımızda</a></li>
+                <li><a href="#contact">İletişim</a></li>
+                <li><a href="#" class="nav-cta">Sipariş Ver</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SLIDER -->
+    <section class="hero-slider" id="home">
+        <!-- Slide 1 -->
+        <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=1600&q=85');">
+            <div class="slide-content">
+                <span class="tag">Yeni Sezon</span>
+                <h1>Her Yudumda<br>Bir Hikaye</h1>
+                <p>El yapımı kahvelerimiz ve özel tariflerimizle tanışın.</p>
+                <a href="#menu" class="btn btn-primary">Keşfet</a>
+                <a href="#contact" class="btn btn-outline">Bize Ulaşın</a>
+            </div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1600&q=85');">
+            <div class="slide-content">
+                <span class="tag">Özel Teklif</span>
+                <h1>Butik Lezzetler<br>Sizi Bekliyor</h1>
+                <p>Günlük taze ürünler, sıcak bir atmosfer.</p>
+                <a href="#menu" class="btn btn-primary">Menüyü Gör</a>
+                <a href="#" class="btn btn-outline">Rezervasyon</a>
+            </div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1511920170033-f8396924c348?w=1600&q=85');">
+            <div class="slide-content">
+                <span class="tag">Mutlu Saatler</span>
+                <h1>Arkadaşlarınızla<br>Keyifli Anlar</h1>
+                <p>Her gün 15:00-18:00 arası %20 indirim!</p>
+                <a href="#menu" class="btn btn-primary">Detaylar</a>
+            </div>
+        </div>
+        <!-- Arrows -->
+        <button class="slider-arrow prev" id="prevSlide"><i class="fas fa-chevron-left"></i></button>
+        <button class="slider-arrow next" id="nextSlide"><i class="fas fa-chevron-right"></i></button>
+        <!-- Dots -->
+        <div class="slider-controls" id="sliderDots">
+            <span class="slider-dot active" data-index="0"></span>
+            <span class="slider-dot" data-index="1"></span>
+            <span class="slider-dot" data-index="2"></span>
+        </div>
+    </section>
+
+    <!-- MENU SECTION -->
+    <section class="section" id="menu">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Menümüz</span>
+                <h2>Öne Çıkan Lezzetler</h2>
+                <p>Sizin için özenle seçtiğimiz favori ürünlerimiz.</p>
+            </div>
+            <div class="menu-grid">
+                <div class="menu-card">
+                    <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=600&q=80" alt="Latte" class="menu-card-img">
+                    <div class="menu-card-body">
+                        <span class="badge">Popüler</span>
+                        <h3>Karamelli Latte</h3>
+                        <span class="price">₺75</span>
+                    </div>
+                </div>
+                <div class="menu-card">
+                    <img src="https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=600&q=80" alt="Filtre Kahve" class="menu-card-img">
+                    <div class="menu-card-body">
+                        <span class="badge">Yeni</span>
+                        <h3>Filtre Kahve</h3>
+                        <span class="price">₺55</span>
+                    </div>
+                </div>
+                <div class="menu-card">
+                    <img src="https://images.unsplash.com/photo-1551024506-0bccd828d307?w=600&q=80" alt="Tatlı" class="menu-card-img">
+                    <div class="menu-card-body">
+                        <span class="badge">Özel</span>
+                        <h3>Çikolatalı Sufle</h3>
+                        <span class="price">₺90</span>
+                    </div>
+                </div>
+                <div class="menu-card">
+                    <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=600&q=80" alt="Kruvasan" class="menu-card-img">
+                    <div class="menu-card-body">
+                        <span class="badge">Kahvaltı</span>
+                        <h3>Tereyağlı Kruvasan</h3>
+                        <span class="price">₺65</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURED BANNER -->
+    <section class="section section-cream" id="about">
+        <div class="container">
+            <div class="featured-banner">
+                <div class="banner-text">
+                    <h2>Demo Cafe Ailesine Katılın</h2>
+                    <p>Sadakat programımızla her alışverişinizde puan kazanın, özel indirimlerden yararlanın.</p>
+                </div>
+                <a href="#" class="btn">Hemen Üye Ol</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Yorumlar</span>
+                <h2>Misafirlerimiz Ne Diyor?</h2>
+                <p>Gerçek deneyimler, gerçek mutluluklar.</p>
+            </div>
+            <div class="testimonial-grid">
+                <div class="testimonial-card">
+                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="quote">"Buradaki latte inanılmaz! Atmosfer harika, çalışanlar çok güleryüzlü. Her sabah uğramadan geçemiyorum."</p>
+                    <span class="author">— Ayşe K.</span>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i></div>
+                    <p class="quote">"Butik lezzetler gerçekten eşsiz. Sufleleri mutlaka denemelisiniz. Arkadaş buluşmalarımın vazgeçilmez adresi."</p>
+                    <span class="author">— Mehmet D.</span>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars"><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i></div>
+                    <p class="quote">"Huzurlu bir ortam, kaliteli kahve ve uygun fiyatlar. Çalışmak için de harika bir mekan."</p>
+                    <span class="author">— Zeynep A.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3>Demo Cafe</h3>
+                    <p style="font-size:0.9rem; margin-bottom:12px;">2018'den beri butik lezzetler ve el yapımı kahvelerle hizmetinizdeyiz.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-x-twitter"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Hızlı Linkler</h3>
+                    <ul>
+                        <li><a href="#home">Anasayfa</a></li>
+                        <li><a href="#menu">Menü</a></li>
+                        <li><a href="#">Hakkımızda</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Kariyer</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>İletişim</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt" style="color:var(--secondary); margin-right:8px;"></i> Bağdat Cad. No:123, Kadıköy/İstanbul</li>
+                        <li><i class="fas fa-phone" style="color:var(--secondary); margin-right:8px;"></i> +90 (216) 555 44 33</li>
+                        <li><i class="fas fa-envelope" style="color:var(--secondary); margin-right:8px;"></i> info@democafe.com</li>
+                        <li><i class="fas fa-clock" style="color:var(--secondary); margin-right:8px;"></i> Her gün 08:00 - 23:00</li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Bülten</h3>
+                    <p style="font-size:0.85rem;">Kampanyalardan haberdar olmak için abone olun.</p>
+                    <div class="newsletter-input">
+                        <input type="email" placeholder="E-posta adresiniz">
+                        <button><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 Demo Cafe. Tüm hakları saklıdır. | <a href="#" style="color:var(--secondary);">Gizlilik Politikası</a> | <a href="#" style="color:var(--secondary);">KVKK</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- BACK TO TOP -->
+    <button class="back-to-top" id="backToTop"><i class="fas fa-arrow-up"></i></button>
+
+    <!-- SCRIPTS -->
+    <script>
+        // ===== LOADER =====
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loader').classList.add('hidden');
+            }, 600);
+        });
+
+        // ===== NAVBAR SCROLL =====
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('backToTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 80) {
+                navbar.classList.add('scrolled');
+                backToTop.classList.add('show');
+            } else {
+                navbar.classList.remove('scrolled');
+                backToTop.classList.remove('show');
+            }
+        });
+
+        // ===== HAMBURGER MENU =====
+        const hamburger = document.getElementById('hamburger');
+        const navLinks = document.getElementById('navLinks');
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+        // Close menu on link click
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // ===== BACK TO TOP =====
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== HERO SLIDER =====
+        const slides = document.querySelectorAll('.slide');
+        const dots = document.querySelectorAll('.slider-dot');
+        const prevBtn = document.getElementById('prevSlide');
+        const nextBtn = document.getElementById('nextSlide');
+        let currentSlide = 0;
+        const totalSlides = slides.length;
+        let slideInterval;
+
+        function goToSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+            slides[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentSlide = index;
+            // Reset animation
+            const content = slides[index].querySelector('.slide-content');
+            content.style.animation = 'none';
+            content.offsetHeight;
+            content.style.animation = 'fadeInUp 0.8s ease forwards';
+        }
+
+        function nextSlide() {
+            goToSlide((currentSlide + 1) % totalSlides);
+        }
+
+        function prevSlide() {
+            goToSlide((currentSlide - 1 + totalSlides) % totalSlides);
+        }
+
+        function startAutoSlide() {
+            slideInterval = setInterval(nextSlide, 5000);
+        }
+
+        function resetAutoSlide() {
+            clearInterval(slideInterval);
+            startAutoSlide();
+        }
+
+        prevBtn.addEventListener('click', () => { prevSlide();
+            resetAutoSlide(); });
+        nextBtn.addEventListener('click', () => { nextSlide();
+            resetAutoSlide(); });
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                goToSlide(parseInt(dot.dataset.index));
+                resetAutoSlide();
+            });
+        });
+
+        // Touch swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const slider = document.querySelector('.hero-slider');
+        slider.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; });
+        slider.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            if (touchStartX - touchEndX > 60) { nextSlide();
+                resetAutoSlide(); }
+            if (touchEndX - touchStartX > 60) { prevSlide();
+                resetAutoSlide(); }
+        });
+
+        startAutoSlide();
+
+        // ===== SMOOTH SCROLL FOR ALL ANCHOR LINKS =====
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
